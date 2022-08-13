@@ -8,7 +8,7 @@ app.use(cookieParser());
 dotenv.config({ path: './config.env' })
 
 require('./db/dbconnect');
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(route);
