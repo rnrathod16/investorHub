@@ -1,6 +1,7 @@
 const express = require('express');
 const route = express.Router();
 const User = require('../models/userSchema');
+const Investor = require("../models/investorSchema");
 const bcrypt = require('bcryptjs');
 const middleware = require('./middleware');
 
@@ -9,10 +10,10 @@ route.get('/', (req, res) => {
 })
 
 route.post('/signup', async(req, res) => {
-    const { name, email, password } = req.body;
+    const { firstname, lastname, email, address, password } = req.body;
 
     try {
-        if (!name || !email || !password) {
+        if (!firstname || !lastname || !email || !address || !password) {
             return res.status(401).json({ message: "Enter All the fields" });
         }
 
@@ -22,7 +23,7 @@ route.post('/signup', async(req, res) => {
             return res.status(401).json({ message: "Email already Exits" });
         }
 
-        const inserted = new User({ name, email, password });
+        const inserted = new User({ firstname, lastname, email, address, password });
 
         const data = await inserted.save();
 
@@ -79,6 +80,38 @@ route.get("/about", middleware, (req, res) => {
 route.get("/logout", (req, res) => {
     res.clearCookie('jwtoken', { path: '/' });
     res.status(201).json({ message: "User Logged Out" });
+})
+
+
+//------------------------------Investor
+
+route.post('/investor/signup', async(req, res) => {
+    const { firstname, lastname, email, address, password } = req.body;
+
+    try {
+        if (!firstname || !lastname || !email || !address || !password) {
+            return res.status(401).json({ message: "Enter All the fields" });
+        }
+
+        const result = await Investor.findOne({ email });
+
+        if (result) {
+            return res.status(401).json({ message: "Email already Exits" });
+        }
+
+        const inserted = new Investor({ firstname, lastname, email, address, password });
+
+        const data = await inserted.save();
+
+        if (data) {
+            return res.status(201).json({ message: "User Inserted" });
+        } else {
+            throw new Error();
+        }
+
+    } catch (error) {
+        console.log(error);
+    }
 })
 
 module.exports = route;

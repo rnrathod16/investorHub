@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const userSchema = mongoose.Schema({
+const investorSchema = mongoose.Schema({
     firstname: {
         type: String,
         required: true
@@ -31,7 +31,7 @@ const userSchema = mongoose.Schema({
     }]
 })
 
-userSchema.pre('save', async function(next) {
+investorSchema.pre('save', async function(next) {
     try {
         if (this.isModified('password')) {
             this.password = await bcrypt.hash(this.password, 10);
@@ -43,7 +43,7 @@ userSchema.pre('save', async function(next) {
     }
 })
 
-userSchema.methods.generateAuthToken = async function() {
+investorSchema.methods.generateAuthToken = async function() {
     try {
         const generateToken = await jwt.sign({ _id: this._id }, process.env.SECRET_KEY);
         this.tokens = this.tokens.concat({ token: generateToken });
@@ -56,6 +56,6 @@ userSchema.methods.generateAuthToken = async function() {
     }
 }
 
-const User = mongoose.model('User', userSchema);
+const Investor = mongoose.model('Investor', investorSchema);
 
-module.exports = User;
+module.exports = Investor;
