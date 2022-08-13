@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors')
 const app = express();
-app.use(cors())
+app.use(cors({ credentials: true }))
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const route = require('./routes/route');
